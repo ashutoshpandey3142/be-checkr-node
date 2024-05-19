@@ -5,25 +5,28 @@ import jwt from 'jsonwebtoken';
 import User from '../../src/models/user';
 import { authService } from '../../src/services/authService';
 import { GlobalError } from '../../src/utils/exceptionHandling/GlobalError';
+import * as testConstant from '../../src/utils/testConstant'
+
 
 describe('authService', () => {
-    
+    const { encryptedUser, invalidUserData, errorMessage } = testConstant;
+
     describe('login', () => {
         beforeEach(() => {
             sinon.restore();
         });
+
         it('should return a token on successful login', async () => {
-            const email = 'test@example.com';
-            const password = 'password123';
+            const { email, password, hashedPassword } = encryptedUser;
             const user = {
                 dataValues: {
                     id: '1',
                     email,
-                    password: await bcrypt.hash(password, 10)
+                    password: hashedPassword
                 }
             };
             const token = 'mocked-token';
-            
+
             User.findOne = sinon.stub().resolves(user);
             bcrypt.compare = sinon.stub().resolves(true);
             jwt.sign = sinon.stub().returns(token);
@@ -34,10 +37,9 @@ describe('authService', () => {
         });
 
         it('should return false for incorrect email', async () => {
-            const email = 'test@example.com';
-            const password = 'password123';
-            
-            User.findOne = sinon.stub().returns(null); // Update this line
+            const { email, password } = invalidUserData;
+
+            User.findOne = sinon.stub().returns(null);
 
             const result = await authService.login(email, password);
 
@@ -45,14 +47,13 @@ describe('authService', () => {
         });
 
         it('should return false for incorrect password', async () => {
-            const email = 'test@example.com';
-            const password = 'password123';
+            const { email, password, hashedPassword } = encryptedUser;
             const user = {
                 id: '1',
                 email,
-                password: await bcrypt.hash('wrongpassword', 10)
+                password: hashedPassword
             };
-            
+
             User.findOne = sinon.stub().resolves(user);
             bcrypt.compare = sinon.stub().resolves(false);
 
@@ -62,15 +63,12 @@ describe('authService', () => {
         });
 
         it('should throw an error if an exception occurs', async () => {
-            const email = 'test@example.com';
-            const password = 'password123';
-            const errorMessage = 'Some error message';
+            const { email, password } = encryptedUser;
 
             User.findOne = sinon.stub().throws(new Error(errorMessage));
 
             try {
                 await authService.login(email, password);
-                // Fail the test if no error is thrown
                 expect.fail('Expected an error to be thrown');
             } catch (error: any) {
                 expect(error).to.be.instanceOf(GlobalError);
