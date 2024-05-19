@@ -1,5 +1,7 @@
+import { Op } from "sequelize";
 import Candidate from "../models/candidate"
 import { GlobalError } from "../utils/exceptionHandling/GlobalError"
+import { createObjectCsvWriter } from 'csv-writer';
 
 export const candidateService = {
     fetchAllCandidates: async (page: number, limit: number | null) => {
@@ -52,6 +54,33 @@ export const candidateService = {
         } catch (error) {
             if(error instanceof GlobalError) throw new GlobalError(error.statusCode, error.message)
             throw new GlobalError(500, error as string);
+        }
+    },
+    generateCSVReport: async (startDate: string, endDate: string) => {
+        try {
+            const candidates = await Candidate.findAll({
+                where: {
+                    created_at: {
+                        [Op.between]: [startDate, endDate]
+                    }
+                }
+            });
+            const csvHeader = [
+                { id: 'id', title: 'ID' },
+                { id: 'name', title: 'Name' },
+                { id: 'adjudication', title: 'Adjudication' },
+            ];
+
+            const csvWriter = createObjectCsvWriter({
+                path: 'candidates_report.csv',
+                header: csvHeader
+            });
+
+            await csvWriter.writeRecords(candidates);
+
+            return 'candidates_report.csv';
+        } catch (error) {
+            throw new Error('Internal Server Error');
         }
     }
 }

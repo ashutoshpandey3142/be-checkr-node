@@ -14,7 +14,6 @@ export const adverseActionController = {
             const adverseAction = await adverseActionService.createAdverseAction(newAdverseAction);
             res.status(201).json(adverseAction);
         } catch (error) {
-            console.log(error)
             next(error)
         }
     },
