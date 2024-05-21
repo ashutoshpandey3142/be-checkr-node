@@ -7,7 +7,7 @@ export const courtSearchService = {
     createCourtSearch: async (courtSearchData: any, candidateId: string) => {
         try {
             const courtSearch = await CourtSearch.create(courtSearchData);
-    
+
             await CandidateCourtSearch.create({
                 candidate_id: candidateId,
                 court_search_id: courtSearch.dataValues.id
