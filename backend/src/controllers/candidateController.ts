@@ -3,7 +3,6 @@ import { sendResponse } from "../utils/helper";
 import { GlobalError } from "../utils/exceptionHandling/GlobalError";
 import { candidateService } from "../services/candidateService";
 import { ICandidate } from "../models/candidate";
-import fs from 'fs'
 
 export const candidateController = {
     fetchAllCandidates: async (req: Request, res: Response, next: NextFunction) => {
@@ -81,21 +80,6 @@ export const candidateController = {
             sendResponse(res, 200, { message: 'Candidate updated successfully', candidate: updatedCandidate });
         } catch (err) {
             next(err);
-        }
-    },
-    getExportReport: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const startDate = req.query.startDate as string;
-            const endDate = req.query.endDate as string;
-            const fileName = await candidateService.generateCSVReport(startDate, endDate);
-
-            res.setHeader('Content-Type', 'text/csv');
-            res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-
-            const fileStream = fs.createReadStream(fileName);
-            fileStream.pipe(res);
-        } catch (error) {
-            next(error);
         }
     }
 }
