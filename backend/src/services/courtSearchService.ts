@@ -12,7 +12,6 @@ export const courtSearchService = {
                 candidate_id: candidateId,
                 court_search_id: courtSearch.dataValues.id
             });
-    
             return courtSearch;
         } catch (error) {
             throw new GlobalError(500, `Failed to create court search: ${error}`);
