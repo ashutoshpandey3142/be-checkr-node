@@ -1,0 +1,24 @@
+{
+    "include": [
+        "src/**/*.ts"
+    ],
+    "exclude": [
+        "src/utils/**",
+        "src/models/**",
+        "test/**.spec.ts"
+    ],
+    "extension": [
+        ".ts"
+    ],
+    "reporter": [
+        "lcov",
+        "text",
+        "text-summary"
+    ],
+    "check-coverage": true,
+    "lines": 95,
+    "statements": 95,
+    "functions": 95,
+    "branches": 80,
+    "report-dir": "./coverage"
+}
