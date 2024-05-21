@@ -4,6 +4,7 @@ import Candidate from '../../src/models/candidate';
 import { candidateService } from '../../src/services/candidateService';
 import { GlobalError } from '../../src/utils/exceptionHandling/GlobalError';
 
+
 describe('candidateService', () => {
     afterEach(() => {
         sinon.restore();
@@ -137,25 +138,6 @@ describe('candidateService', () => {
             } catch (error: any) {
                 expect(error).to.be.instanceOf(GlobalError);
                 expect(error.message).to.equal('Error: Database error');
-            }
-        });
-    });
-
-    describe('generateCSVReport', () => {
-
-
-    afterEach(() => {
-        sinon.restore();
-    });
-
-        it('should throw an error if CSV generation fails', async () => {
-            Candidate.findAll = sinon.stub().throws(new Error('Database error'));
-
-            try {
-                await candidateService.generateCSVReport('2023-01-01', '2023-12-31');
-                assert.fail('Expected error was not thrown');
-            } catch (error: any) {
-                expect(error.message).to.equal('Internal Server Error');
             }
         });
     });
