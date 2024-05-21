@@ -31,7 +31,7 @@ const userRoutes = Router();
  *       '500':
  *         description: Internal server error
  */
-userRoutes.post('/', createUserRequestValidation, handleValidationErrors, userController.createUser);
+userRoutes.post('/signup', createUserRequestValidation, handleValidationErrors, userController.createUser);
 
 
 /**

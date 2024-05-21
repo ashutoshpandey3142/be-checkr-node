@@ -15,7 +15,6 @@ export const courtSearchController = {
 
             res.status(201).json(newCourtSearch);
         } catch (error) {
-            console.log(error)
             next(error)
         }
     },

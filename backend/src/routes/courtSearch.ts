@@ -2,8 +2,11 @@ import { Router } from "express";
 import { courtSearchController } from "../controllers/courtSearchController";
 import { validateCourtSearchRequestBody } from "../utils/validation/courtSearch";
 import { handleValidationErrors } from "../utils/validation/handleValidation";
+import { AuthMiddleware } from "../middleware/auth";
 
 const courtSearchRoutes = Router()
+
+courtSearchRoutes.use(AuthMiddleware.authenticateToken)
 
 /**
  * @openapi

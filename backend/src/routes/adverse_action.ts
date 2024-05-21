@@ -3,9 +3,11 @@ import { adverseActionController } from "../controllers/adverse_action";
 import { validateAdverseActionRequestBody } from "../utils/validation/adverseAction";
 import { handleValidationErrors } from "../utils/validation/handleValidation";
 import { pageAndLimitValidationRules } from "../utils/validation/candidate";
+import { AuthMiddleware } from "../middleware/auth";
 
 const adverseActionRoutes = Router()
 
+adverseActionRoutes.use(AuthMiddleware.authenticateToken)
 /**
  * @openapi
  * /adverse-action:

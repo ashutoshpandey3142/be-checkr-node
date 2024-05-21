@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { userService } from "../services/userService";
-import { NotFoundError } from "../utils/exceptionHandling/GlobalError";
+import { GlobalError } from "../utils/exceptionHandling/GlobalError";
 import { sendResponse } from "../utils/helper";
 
 export const userController = {
@@ -20,7 +20,7 @@ export const userController = {
             const email = req.query.email as string;
             const user = await userService.getUserByEmail(email);
             if (!user) {
-                throw new NotFoundError('User Not Found with email: '+email);
+                throw new GlobalError(404, 'User Not Found with email: '+email);
             } else {
                 sendResponse(res, 200, { message: "User found", user });
             }
@@ -35,7 +35,7 @@ export const userController = {
             const { newPassword } = req.body;
             const updatedUser = await userService.updateUserPassword(userId, newPassword);
             if (!updatedUser) {
-                throw new NotFoundError('User Not Found with userId: '+userId);
+                throw new GlobalError(404, 'User Not Found with userId: '+userId);
             } else {
                 sendResponse(res, 200, { message: "User password updated successfully", user: updatedUser });
             }

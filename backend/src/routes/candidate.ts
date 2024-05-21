@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { candidateController } from "../controllers/candidate";
+import { candidateController } from "../controllers/candidateController";
 import {pageAndLimitValidationRules, validateCandidateRequestBody, validateCandidateUpdateRequest} from "../utils/validation/candidate";
 import { handleValidationErrors } from "../utils/validation/handleValidation";
+import { AuthMiddleware } from "../middleware/auth";
 
 const candidateRoutes = Router()
 
+candidateRoutes.use(AuthMiddleware.authenticateToken)
 /**
  * @openapi
  * /candidates:
@@ -43,6 +45,8 @@ candidateRoutes.get('', pageAndLimitValidationRules, handleValidationErrors, can
  */
 candidateRoutes.post('/', validateCandidateRequestBody, handleValidationErrors, candidateController.createCandidate);
 
+
+candidateRoutes.get('/export-csv', candidateController.getExportReport);
 /**
  * @openapi
  * /candidates/{candidateId}:
