@@ -1,41 +1,56 @@
 name: Build
-
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     types: [opened, synchronize, reopened]
-
 jobs:
   sonarcloud:
-    name: SonarCloud
-    runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./backend/
+        working-directory: backend/
+    name: SonarCloud
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Set NODE_ENV
-        run: echo "NODE_ENV=development" >> $GITHUB_ENV
-
-      - name: Install Yarn
-        run: corepack enable
-
-      - name: install typescript
-        run: yarn add typescript
-
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       - name: Install Dependencies
-        run: yarn install
-
-      - name: Test and Coverage
-        run: yarn test:coverage
-
+        run: npm install --legacy-peer-deps
+      - name: install typescript
+        run: npm i typescript
+      - name: Test and coverage
+        run: npm run test:coverage
       - name: SonarCloud Scan
+        with:
+          projectBaseDir: backend/
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  branchAnalysis: # to get the branch analysis on merge
+    if: github.event.pull_request.merged == true
+    name: Branch Analysis on PR merge
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend/
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Install Dependencies
+        run: npm install --legacy-peer-deps
+      - name: Test and coverage
+        run: npm run test:coverage
+      - name: SonarCloud Scan
+        with:
+          projectBaseDir: backend/
+          args: >
+            -Dsonar.branch.name=main
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN}}
