@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon --exec ts-node src/index.ts",
     "test": "mocha --require ts-node/register --recursive test/**/*.spec.ts",
-    "test:coverage": "nyc --report-dir=coverage --reporter=lcov mocha --require ts-node/register --recursive test/**/*.spec.ts",
+    "test:coverage": "nyc --reporter=lcov --reporter=text-lcov npm test --coverage --testResultsProcessor=mocha-reporter-sonarqube --reporter-options output=xunit.xml",
     "sonar": "sonar-scanner"
   },
   "author": "",
